@@ -67,6 +67,19 @@
 
           <v-divider></v-divider>
 
+          <!-- GitHub 链接 -->
+          <v-list-item @click="openGithub">
+            <template v-slot:prepend>
+              <v-icon icon="mdi-github" color="grey-darken-1"></v-icon>
+            </template>
+            <v-list-item-title>GitHub</v-list-item-title>
+            <template v-slot:append>
+              <v-icon icon="mdi-open-in-new" size="small" color="grey"></v-icon>
+            </template>
+          </v-list-item>
+
+          <v-divider v-if="authStore.isAuthRequired"></v-divider>
+
           <!-- 退出登录 -->
           <v-list-item @click="handleLogout" color="error" v-if="authStore.isAuthRequired">
             <template v-slot:prepend>
@@ -90,9 +103,17 @@
       <v-list-item v-for="item in menuItems" :key="item.title" :to="item.to" :prepend-icon="item.icon"
         :title="item.title" :subtitle="item.subtitle" color="primary"></v-list-item>
     </v-list>
-    <template v-slot:append v-if="authStore.isAuthRequired">
+    <template v-slot:append>
       <div class="pa-2">
-        <v-btn color="error" variant="outlined" block @click="handleLogout">
+        <!-- GitHub 链接 -->
+        <v-btn color="grey-darken-1" variant="outlined" block @click="openGithub" class="mb-2">
+          <v-icon icon="mdi-github" class="mr-2"></v-icon>
+          GitHub
+          <v-icon icon="mdi-open-in-new" size="small" class="ml-1"></v-icon>
+        </v-btn>
+
+        <!-- 退出登录 -->
+        <v-btn v-if="authStore.isAuthRequired" color="error" variant="outlined" block @click="handleLogout">
           <v-icon icon="mdi-logout" class="mr-2"></v-icon>
           退出登录
         </v-btn>
@@ -207,6 +228,11 @@ const checkSystemHealth = async () => {
   } finally {
     healthChecking.value = false
   }
+}
+
+// 打开GitHub页面
+const openGithub = () => {
+  window.open('https://github.com/jianxcao/notify', '_blank')
 }
 
 // 处理退出登录
