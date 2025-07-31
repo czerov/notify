@@ -1,13 +1,43 @@
 <template>
-  <v-dialog v-model="dialogVisible" max-width="500px" @update:model-value="handleDialogClose">
+  <v-dialog v-model="dialogVisible" max-width="600px" @update:model-value="handleDialogClose">
     <v-card>
       <v-card-title>测试通知 - {{ app?.name }}</v-card-title>
       <v-card-text>
         <v-form>
+          <!-- 固定字段 -->
           <v-text-field v-model="form.title" label="标题" class="mb-4"></v-text-field>
           <v-textarea v-model="form.content" label="内容" rows="3" class="mb-4"></v-textarea>
           <v-text-field v-model="form.image" label="图片" class="mb-4"></v-text-field>
-          <v-text-field v-model="form.url" label="链接URL"></v-text-field>
+          <v-text-field v-model="form.url" label="链接URL" class="mb-4"></v-text-field>
+
+          <!-- 动态字段 -->
+          <v-divider class="my-4"></v-divider>
+          <div class="d-flex align-center justify-space-between mb-3">
+            <h4>动态字段</h4>
+            <v-btn size="small" color="primary" variant="outlined" @click="addCustomField">
+              <v-icon left>mdi-plus</v-icon>
+              添加字段
+            </v-btn>
+          </div>
+
+          <div v-for="(field, index) in customFields" :key="index" class="mb-3">
+            <v-row>
+              <v-col cols="4">
+                <v-text-field v-model="field.name" label="字段名" density="compact" variant="outlined"></v-text-field>
+              </v-col>
+              <v-col cols="7">
+                <v-text-field v-model="field.value" label="字段值" density="compact" variant="outlined"></v-text-field>
+              </v-col>
+              <v-col cols="1" class="d-flex align-center">
+                <v-btn size="small" color="error" variant="text" icon="mdi-delete"
+                  @click="removeCustomField(index)"></v-btn>
+              </v-col>
+            </v-row>
+          </div>
+
+          <div v-if="customFields.length === 0" class="text-center text-grey mb-3">
+            <p>暂无动态字段，点击上方按钮添加</p>
+          </div>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -22,11 +52,17 @@
 <script setup lang="ts">
 import { ref, watch, defineProps, defineEmits } from 'vue'
 
+interface CustomField {
+  name: string
+  value: string
+}
+
 interface TestNotificationData {
   title: string
   content: string
   url: string
   image: string
+  [key: string]: any
 }
 
 interface Props {
@@ -55,6 +91,22 @@ const form = ref<TestNotificationData>({
   image: ''
 })
 
+// 动态字段
+const customFields = ref<CustomField[]>([])
+
+// 添加自定义字段
+const addCustomField = () => {
+  customFields.value.push({
+    name: '',
+    value: ''
+  })
+}
+
+// 删除自定义字段
+const removeCustomField = (index: number) => {
+  customFields.value.splice(index, 1)
+}
+
 // 监听对话框打开时重置表单
 watch(dialogVisible, (visible) => {
   if (visible) {
@@ -64,12 +116,20 @@ watch(dialogVisible, (visible) => {
       url: '',
       image: ''
     }
+    customFields.value = []
   }
 })
 
 // 处理发送
 const handleSend = () => {
-  emit('send', { ...form.value })
+  const data = {
+    ...form.value,
+    ...customFields.value.filter(field => field.name.trim() !== '' || field.value.trim() !== '').reduce((acc, field) => {
+      acc[field.name] = field.value
+      return acc
+    }, {} as Record<string, string>)
+  }
+  emit('send', data)
 }
 
 // 处理取消
