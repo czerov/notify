@@ -157,6 +157,34 @@ pnpm run build
 # 将 dist 目录部署到 Web 服务器
 ```
 
+## 🎨 界面预览
+
+### 仪表板
+系统提供了直观的仪表板界面，展示系统运行状态和各项配置概览：
+
+![仪表板](doc/img/dashboard.png)
+
+### 通知服务管理
+支持多种通知渠道的统一管理，包括企业微信、钉钉、Telegram等：
+
+![通知服务列表](doc/img/notify.png)
+
+![编辑通知服务](doc/img/editNotify.png)
+
+### 模板管理
+提供可视化的消息模板编辑器，支持Go Template语法：
+
+![模板列表](doc/img/template.png)
+
+![编辑模板](doc/img/editTemplate.png)
+
+### 通知应用管理
+支持多应用管理，每个应用可配置独立的通知渠道和模板：
+
+![通知应用列表](doc/img/notifyApp.png)
+
+![编辑通知应用](doc/img/editNotifyApp.png)
+
 ## 📖 使用指南
 
 ### 📋 Web 界面配置（推荐）
