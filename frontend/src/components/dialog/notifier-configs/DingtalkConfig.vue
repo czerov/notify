@@ -7,6 +7,18 @@
     <v-text-field v-model="config.targets" label="目标 *" class="mb-4" @input="handleConfigChange"></v-text-field>
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint
       class="mb-4" @input="handleConfigChange"></v-text-field>
+
+    <v-alert type="info" variant="tonal" class="mb-4">
+      <div class="text-body-2">
+        <strong>如何获取配置信息：</strong><br>
+        1. 打开钉钉PC客户端，进入要发送消息的群聊<br>
+        2. 点击群设置 → 智能群助手 → 添加机器人 → 自定义<br>
+        3. 配置机器人名称，安全设置选择"加签"<br>
+        4. 记录生成的 <strong>Webhook地址</strong> 中的 access_token 参数<br>
+        5. 记录生成的 <strong>签名密钥</strong><br>
+        6. 目标填写要@的用户手机号，多个用逗号分隔（可选）
+      </div>
+    </v-alert>
   </div>
 </template>
 

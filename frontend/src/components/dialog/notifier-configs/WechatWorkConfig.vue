@@ -13,6 +13,20 @@
 
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint
       class="mb-4" @input="handleConfigChange"></v-text-field>
+
+    <v-alert type="info" variant="tonal" class="mb-4">
+      <div class="text-body-2">
+        <strong>如何获取配置信息：</strong><br>
+        1. 登录企业微信管理后台：https://work.weixin.qq.com/<br>
+        2. 进入"应用管理" → "应用" → "创建应用"<br>
+        3. 创建自建应用后，可以获得：<br>
+        &nbsp;&nbsp;&nbsp;• <strong>企业ID</strong>：在"我的企业" → "企业信息"中查看<br>
+        &nbsp;&nbsp;&nbsp;• <strong>应用ID</strong>：在应用详情页的 AgentId<br>
+        &nbsp;&nbsp;&nbsp;• <strong>应用密钥</strong>：在应用详情页的 Secret<br>
+        4. 目标可以是用户ID、部门ID或标签ID，多个用逗号分隔<br>
+        &nbsp;&nbsp;&nbsp;用户ID格式：@userId，部门ID格式：@departmentId
+      </div>
+    </v-alert>
   </div>
 </template>
 
