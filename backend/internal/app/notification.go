@@ -14,6 +14,18 @@ import (
 	"notify/internal/notifier"
 )
 
+var funcMap = template.FuncMap{
+	"contains":   strings.Contains,
+	"hasSuffix":  strings.HasSuffix,
+	"hasPrefix":  strings.HasPrefix,
+	"index":      strings.Index,
+	"lastIndex":  strings.LastIndex,
+	"replace":    strings.Replace,
+	"replaceAll": strings.ReplaceAll,
+	"split":      strings.Split,
+	"join":       strings.Join,
+}
+
 // NotificationApp 通知应用
 type NotificationApp struct {
 	configManager *config.ConfigManager
@@ -284,7 +296,7 @@ func (app *NotificationApp) renderTemplate(name string, templateStr string, data
 		return "", fmt.Errorf("模板不能为空")
 	}
 
-	tmpl, err := template.New(name).Parse(templateStr)
+	tmpl, err := template.New(name).Funcs(funcMap).Parse(templateStr)
 	if err != nil {
 		return "", fmt.Errorf("解析模板失败: %w", err)
 	}
