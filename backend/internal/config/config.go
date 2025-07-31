@@ -10,9 +10,10 @@ import (
 type NotifiersType string
 
 var (
-	WechatWorkAPPBot NotifiersType = "wechatWorkAPPBot"
-	TelegramAppBot   NotifiersType = "telegramAppBot"
-	DingTalkAppBot   NotifiersType = "dingTalkAppBot"
+	WechatWorkAPPBot     NotifiersType = "wechatWorkAPPBot"
+	WechatWorkWebhookBot NotifiersType = "wechatWorkWebhookBot"
+	TelegramAppBot       NotifiersType = "telegramAppBot"
+	DingTalkAppBot       NotifiersType = "dingTalkAppBot"
 )
 
 // LoggerConfig 日志配置
@@ -36,13 +37,20 @@ type NotifierInstance struct {
 	Config  map[string]interface{} `yaml:",inline" json:"config"`
 }
 
-// WechatWorkConfig 企业微信配置
+// WechatWorkConfig 企业微信应用配置
 type WechatWorkConfig struct {
 	Enabled bool   `yaml:"enabled" json:"enabled"`
 	CorpID  string `yaml:"corp_id" json:"corpId"`
 	AgentID string `yaml:"agent_id" json:"agentId"`
 	Secret  string `yaml:"secret" json:"secret"`
 	Targets string `yaml:"targets" json:"targets"`
+	Proxy   string `yaml:"proxy" json:"proxy"` // 代理服务器地址，格式: http://proxy.example.com:8080
+}
+
+// WechatWorkWebhookConfig 企业微信群机器人配置
+type WechatWorkWebhookConfig struct {
+	Enabled bool   `yaml:"enabled" json:"enabled"`
+	Key     string `yaml:"key" json:"key"`     // 群机器人的 key
 	Proxy   string `yaml:"proxy" json:"proxy"` // 代理服务器地址，格式: http://proxy.example.com:8080
 }
 

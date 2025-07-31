@@ -70,17 +70,23 @@ export interface SystemStatus {
 }
 
 // 通知服务类型
-export type NotifierType = 'wechatWorkAPPBot' | 'telegramAppBot' | 'dingTalkAppBot'
+export type NotifierType =
+  | 'wechatWorkAPPBot'
+  | 'wechatWorkWebhookBot'
+  | 'telegramAppBot'
+  | 'dingTalkAppBot'
 
 export const NotifierTypeMap = {
   wechatWorkAPPBot: 'wechatWorkAPPBot',
+  wechatWorkWebhookBot: 'wechatWorkWebhookBot',
   telegramAppBot: 'telegramAppBot',
   dingTalkAppBot: 'dingTalkAppBot',
 } as const
 
 // 通知服务类型选项
 export const notifierTypeOptions = [
-  { title: '企业微信', value: NotifierTypeMap.wechatWorkAPPBot },
+  { title: '企业微信应用', value: NotifierTypeMap.wechatWorkAPPBot },
+  { title: '企业微信群机器人', value: NotifierTypeMap.wechatWorkWebhookBot },
   { title: 'Telegram', value: NotifierTypeMap.telegramAppBot },
   { title: '钉钉', value: NotifierTypeMap.dingTalkAppBot },
 ]
@@ -88,13 +94,20 @@ export const notifierTypeOptions = [
 // 通知级别
 export type NotificationLevel = 'info' | 'warning' | 'error' | 'success'
 
-// 企业微信配置
+// 企业微信应用配置
 export interface WechatWorkConfig {
   enabled: boolean
   corp_id: string
   agent_id: string
   secret: string
   targets?: string
+  proxy?: string
+}
+
+// 企业微信群机器人配置
+export interface WechatWorkWebhookConfig {
+  enabled: boolean
+  key: string
   proxy?: string
 }
 
@@ -116,4 +129,8 @@ export interface DingTalkConfig {
 }
 
 // 通知服务配置联合类型
-export type NotifierConfig = WechatWorkConfig | TelegramConfig | DingTalkConfig
+export type NotifierConfig =
+  | WechatWorkConfig
+  | WechatWorkWebhookConfig
+  | TelegramConfig
+  | DingTalkConfig

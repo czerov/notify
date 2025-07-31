@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"notify/internal/config"
+	"notify/internal/logger"
 	"notify/internal/notifier"
 )
 
@@ -48,6 +49,13 @@ func (app *NotificationApp) InitNotifiers() {
 				wechatNotifier := notifier.NewWechatWorkNotifier(config)
 				app.notifiers[instanceName] = wechatNotifier
 			}
+		case config.WechatWorkWebhookBot:
+			// 将map[string]interface{}转换为WechatWorkWebhookConfig
+			if config, err := app.parseWechatWorkWebhookConfig(instance.Config); err == nil {
+				config.Enabled = instance.Enabled
+				wechatWebhookNotifier := notifier.NewWechatWorkWebhookNotifier(config)
+				app.notifiers[instanceName] = wechatWebhookNotifier
+			}
 		case config.TelegramAppBot:
 			// 将map[string]interface{}转换为TelegramConfig
 			if config, err := app.parseTelegramConfig(instance.Config); err == nil {
@@ -64,6 +72,7 @@ func (app *NotificationApp) InitNotifiers() {
 			}
 		}
 	}
+	logger.Debug("notifiers", cfg.Notifiers)
 }
 
 // parseWechatWorkConfig 解析企业微信配置
@@ -109,6 +118,24 @@ func (app *NotificationApp) parseTelegramConfig(configData map[string]interface{
 
 	if cfg.BotToken == "" {
 		return cfg, fmt.Errorf("Telegram配置不完整")
+	}
+
+	return cfg, nil
+}
+
+// parseWechatWorkWebhookConfig 解析企业微信群机器人配置
+func (app *NotificationApp) parseWechatWorkWebhookConfig(configData map[string]interface{}) (config.WechatWorkWebhookConfig, error) {
+	cfg := config.WechatWorkWebhookConfig{}
+
+	if key, ok := configData["key"].(string); ok {
+		cfg.Key = key
+	}
+	if proxy, ok := configData["proxy"].(string); ok {
+		cfg.Proxy = proxy
+	}
+
+	if cfg.Key == "" {
+		return cfg, fmt.Errorf("企业微信群机器人配置不完整：缺少 key")
 	}
 
 	return cfg, nil
@@ -275,7 +302,11 @@ func (app *NotificationApp) ValidateConfig() error {
 		switch instance.Type {
 		case config.WechatWorkAPPBot:
 			if _, err := app.parseWechatWorkConfig(instance.Config); err != nil {
-				return fmt.Errorf("通知服务实例 %s (企业微信) 配置错误: %v", instanceName, err)
+				return fmt.Errorf("通知服务实例 %s (企业微信应用) 配置错误: %v", instanceName, err)
+			}
+		case config.WechatWorkWebhookBot:
+			if _, err := app.parseWechatWorkWebhookConfig(instance.Config); err != nil {
+				return fmt.Errorf("通知服务实例 %s (企业微信群机器人) 配置错误: %v", instanceName, err)
 			}
 		case config.TelegramAppBot:
 			if _, err := app.parseTelegramConfig(instance.Config); err != nil {

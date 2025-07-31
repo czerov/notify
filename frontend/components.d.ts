@@ -25,5 +25,6 @@ declare module 'vue' {
     TemplatePreviewDialog: typeof import('./src/components/dialog/TemplatePreviewDialog.vue')['default']
     TestNotificationDialog: typeof import('./src/components/dialog/TestNotificationDialog.vue')['default']
     WechatWorkConfig: typeof import('./src/components/dialog/notifier-configs/WechatWorkConfig.vue')['default']
+    WechatWorkWebhookConfig: typeof import('./src/components/dialog/notifier-configs/WechatWorkWebhookConfig.vue')['default']
   }
 }
