@@ -67,15 +67,76 @@ func (w *WechatWorkWebhookNotifier) Send(ctx context.Context, message *Notificat
 		return err
 	}
 
-	// 构建消息内容
-	content := w.buildMessage(message)
-
 	// 发送消息
-	return w.sendWebhookMessage(ctx, content)
+	if message.Image != "" {
+		return w.SendNewsdownMessage(ctx, message)
+	}
+	return w.sendMarkdownMessage(ctx, message)
 }
 
 // buildMessage 构建消息内容
-func (w *WechatWorkWebhookNotifier) buildMessage(message *NotificationMessage) string {
+func (w *WechatWorkWebhookNotifier) SendTextMessage(ctx context.Context, message *NotificationMessage) error {
+	// 构建完整的 webhook URL
+	webhookURL := fmt.Sprintf("%s/cgi-bin/webhook/send?key=%s", w.baseURL, w.config.Key)
+
+	// 企业微信群机器人消息格式
+	payload := map[string]interface{}{
+		"msgtype": "text",
+		"text": map[string]interface{}{
+			"content": message.Title + "\n" + message.Content,
+		},
+	}
+	resp, err := w.client.R().
+		SetContext(ctx).
+		SetHeader("Content-Type", "application/json").
+		SetBody(payload).
+		Post(webhookURL)
+
+	if err != nil {
+		return fmt.Errorf("发送企业微信群机器人消息失败: %w", err)
+	}
+
+	return w.checkResp(resp)
+}
+
+func (w *WechatWorkWebhookNotifier) SendNewsdownMessage(ctx context.Context, message *NotificationMessage) error {
+	// 构建完整的 webhook URL
+	webhookURL := fmt.Sprintf("%s/cgi-bin/webhook/send?key=%s", w.baseURL, w.config.Key)
+	url := message.URL
+	if url == "" {
+		url = message.Image
+	}
+	// 企业微信群机器人消息格式
+	payload := map[string]interface{}{
+		"msgtype": "news",
+		"news": map[string]interface{}{
+			"articles": []map[string]interface{}{
+				{
+					"title":       message.Title,
+					"description": message.Content,
+					"url":         url,
+					"picurl":      message.Image,
+				},
+			},
+		},
+	}
+
+	resp, err := w.client.R().
+		SetContext(ctx).
+		SetHeader("Content-Type", "application/json").
+		SetBody(payload).
+		Post(webhookURL)
+
+	if err != nil {
+		return fmt.Errorf("发送企业微信群机器人消息失败: %w", err)
+	}
+
+	return w.checkResp(resp)
+}
+
+// sendWebhookMessage 发送 webhook 消息
+func (w *WechatWorkWebhookNotifier) sendMarkdownMessage(ctx context.Context, message *NotificationMessage) error {
+
 	var content strings.Builder
 	if message.Image != "" {
 		content.WriteString(fmt.Sprintf("![%s](%s)\n\n", message.Title, message.Image))
@@ -96,11 +157,6 @@ func (w *WechatWorkWebhookNotifier) buildMessage(message *NotificationMessage) s
 		content.WriteString(fmt.Sprintf("⏰ %s", message.Timestamp))
 	}
 
-	return content.String()
-}
-
-// sendWebhookMessage 发送 webhook 消息
-func (w *WechatWorkWebhookNotifier) sendWebhookMessage(ctx context.Context, content string) error {
 	// 构建完整的 webhook URL
 	webhookURL := fmt.Sprintf("%s/cgi-bin/webhook/send?key=%s", w.baseURL, w.config.Key)
 
@@ -108,7 +164,7 @@ func (w *WechatWorkWebhookNotifier) sendWebhookMessage(ctx context.Context, cont
 	payload := map[string]interface{}{
 		"msgtype": "markdown_v2",
 		"markdown_v2": map[string]interface{}{
-			"content": content,
+			"content": content.String(),
 		},
 	}
 
@@ -122,6 +178,10 @@ func (w *WechatWorkWebhookNotifier) sendWebhookMessage(ctx context.Context, cont
 		return fmt.Errorf("发送企业微信群机器人消息失败: %w", err)
 	}
 
+	return w.checkResp(resp)
+}
+
+func (w *WechatWorkWebhookNotifier) checkResp(resp *resty.Response) error {
 	if resp.StatusCode() != 200 {
 		return fmt.Errorf("企业微信群机器人API返回错误状态码: %d, 响应: %s", resp.StatusCode(), resp.String())
 	}
@@ -137,6 +197,5 @@ func (w *WechatWorkWebhookNotifier) sendWebhookMessage(ctx context.Context, cont
 		errmsg, _ := result["errmsg"].(string)
 		return fmt.Errorf("企业微信群机器人返回错误: errcode=%v, errmsg=%s", errcode, errmsg)
 	}
-
 	return nil
 }
