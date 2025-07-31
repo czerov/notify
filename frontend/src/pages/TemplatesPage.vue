@@ -16,6 +16,10 @@
         </p>
       </v-col>
       <v-col cols="auto">
+        <v-btn @click="showImportDialog = true" variant="outlined" size="small" class="me-2">
+          <v-icon icon="mdi-import" class="mr-1"></v-icon>
+          导入
+        </v-btn>
         <v-btn color="primary" @click="showCreateDialog = true" size="small">
           <v-icon icon="mdi-plus" class="mr-2"></v-icon>
           创建模板
@@ -70,6 +74,10 @@
               <v-icon icon="mdi-pencil" class="mr-1"></v-icon>
               编辑
             </v-btn>
+            <v-btn variant="text" size="small" @click="exportTemplate(template)" :loading="templatesStore.loading">
+              <v-icon icon="mdi-share-variant" class="mr-1"></v-icon>
+              分享
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn variant="text" size="small" color="error" @click="deleteTemplate(template.id)"
               :loading="templatesStore.loading">
@@ -105,12 +113,17 @@
     <TemplateEditDialog v-model="showCreateDialog" :editing-template="editingTemplate" :loading="templatesStore.loading"
       @save="handleSaveTemplate" @cancel="handleCancelEdit" />
 
+    <!-- 导入模板对话框 -->
+    <TemplateImportDialog v-model="showImportDialog" :existing-templates="templatesStore.templates"
+      :loading="templatesStore.loading" @import="handleImportTemplates" @cancel="handleCancelImport" />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import LoadingView from '@/components/LoadingView.vue'
 import TemplateEditDialog from '@/components/dialog/TemplateEditDialog.vue'
+import TemplateImportDialog from '@/components/dialog/TemplateImportDialog.vue'
 import { useTemplatesStore, type IMessageTemplate } from '@/store/templates'
 import { onMounted, ref } from 'vue'
 import { useConfirm } from 'vuetify-use-dialog'
@@ -122,6 +135,7 @@ const pageLoading = ref(true)
 
 // 对话框状态
 const showCreateDialog = ref(false)
+const showImportDialog = ref(false)
 
 // 编辑状态
 const editingTemplate = ref<IMessageTemplate | null>(null)
@@ -183,6 +197,31 @@ const handleSaveTemplate = async (formData: any) => {
 const handleCancelEdit = () => {
   showCreateDialog.value = false
   editingTemplate.value = null
+}
+
+// 分享模板到剪贴板
+const exportTemplate = (template: IMessageTemplate) => {
+  templatesStore.shareTemplateToClipboard(template)
+}
+
+// 处理导入模板
+const handleImportTemplates = async (data: { templates: IMessageTemplate[], conflictStrategy: 'skip' | 'overwrite' | 'generate' }) => {
+  try {
+    const { templates, conflictStrategy } = data
+    await templatesStore.importTemplates(
+      templates,
+      conflictStrategy === 'overwrite',
+      conflictStrategy === 'generate'
+    )
+    showImportDialog.value = false
+  } catch (error) {
+    console.error('导入模板失败:', error)
+  }
+}
+
+// 处理取消导入
+const handleCancelImport = () => {
+  showImportDialog.value = false
 }
 
 // 页面加载时获取数据

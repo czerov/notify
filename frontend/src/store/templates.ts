@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import http from '@/common/axiosConfig'
 import { ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
+import { copyToClipboard } from '@/common/utils'
 
 const toast = useToast()
 
@@ -172,6 +173,119 @@ export const useTemplatesStore = defineStore('templates', () => {
     }
   }
 
+  // 分享模板到剪贴板
+  const shareTemplateToClipboard = async (template: IMessageTemplate) => {
+    try {
+      const exportData = {
+        version: '1.0',
+        exportTime: new Date().toISOString(),
+        exportType: 'single',
+        templates: [template],
+      }
+
+      const jsonString = JSON.stringify(exportData, null, 2)
+
+      const success = await copyToClipboard(jsonString)
+
+      if (success) {
+        toast.success(`模板 "${template.name}" 已分享到剪贴板`)
+      } else {
+        toast.error('分享到剪贴板失败')
+      }
+    } catch (error: any) {
+      console.error('分享模板失败:', error)
+      toast.error('分享模板失败')
+    }
+  }
+
+  // 生成随机ID
+  const generateRandomId = (baseName: string = 'template'): string => {
+    const timestamp = Date.now().toString(36)
+    const randomStr = Math.random().toString(36).substring(2, 8)
+    let newId = `${baseName}_${timestamp}_${randomStr}`
+
+    // 确保ID唯一
+    let counter = 1
+    const originalId = newId
+    while (templates.value[newId]) {
+      newId = `${originalId}_${counter}`
+      counter++
+    }
+
+    return newId
+  }
+
+  // 批量导入模板
+  const importTemplates = async (
+    templatesToImport: IMessageTemplate[],
+    overwrite: boolean = false,
+    generateNewIds: boolean = false
+  ) => {
+    loading.value = true
+    let successCount = 0
+    let skipCount = 0
+    let errorCount = 0
+    let renamedCount = 0
+
+    try {
+      for (const template of templatesToImport) {
+        try {
+          const exists = templates.value[template.id]
+          let templateToImport = { ...template }
+
+          if (exists) {
+            if (overwrite) {
+              await updateTemplate(template.id, templateToImport)
+              successCount++
+            } else if (generateNewIds) {
+              // 生成新的随机ID
+              const newId = generateRandomId(template.id.replace(/[^a-zA-Z0-9_-]/g, ''))
+              templateToImport.id = newId
+              await createTemplate(templateToImport)
+              successCount++
+              renamedCount++
+            } else {
+              skipCount++
+              continue
+            }
+          } else {
+            await createTemplate(templateToImport)
+            successCount++
+          }
+        } catch (error) {
+          console.error(`导入模板 ${template.id} 失败:`, error)
+          errorCount++
+        }
+      }
+
+      // 显示导入结果
+      if (successCount > 0) {
+        let message = `成功导入 ${successCount} 个模板`
+        if (renamedCount > 0) {
+          message += `，其中 ${renamedCount} 个模板使用了新的ID`
+        }
+        if (skipCount > 0) {
+          message += `，跳过 ${skipCount} 个已存在的模板`
+        }
+        toast.success(message)
+      }
+
+      if (errorCount > 0) {
+        toast.error(`${errorCount} 个模板导入失败`)
+      }
+
+      if (successCount === 0 && skipCount > 0) {
+        toast.info(`跳过了 ${skipCount} 个已存在的模板`)
+      }
+    } catch (error: any) {
+      console.error('批量导入模板失败:', error)
+      toast.error('批量导入模板失败')
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // 状态
     templates,
@@ -185,5 +299,9 @@ export const useTemplatesStore = defineStore('templates', () => {
     deleteTemplate,
     getTemplateOptions,
     previewTemplate,
+
+    // 导入导出方法
+    shareTemplateToClipboard,
+    importTemplates,
   }
 })

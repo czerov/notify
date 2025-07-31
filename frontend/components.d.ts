@@ -22,6 +22,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     TelegramConfig: typeof import('./src/components/dialog/notifier-configs/TelegramConfig.vue')['default']
     TemplateEditDialog: typeof import('./src/components/dialog/TemplateEditDialog.vue')['default']
+    TemplateImportDialog: typeof import('./src/components/dialog/TemplateImportDialog.vue')['default']
     TemplatePreviewDialog: typeof import('./src/components/dialog/TemplatePreviewDialog.vue')['default']
     TestNotificationDialog: typeof import('./src/components/dialog/TestNotificationDialog.vue')['default']
     WechatWorkConfig: typeof import('./src/components/dialog/notifier-configs/WechatWorkConfig.vue')['default']
