@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
 
@@ -212,24 +213,54 @@ func (app *NotificationApp) Send(ctx context.Context, appConfig config.Notificat
 	if len(appConfig.Notifiers) == 0 {
 		return fmt.Errorf("通知应用 %s 未配置任何通知服务", appConfig.Name)
 	}
-	// 发送到配置的通知服务
-	var errors []error
+	// 发送到配置的通知服务 - 并发发送，最多10个协程
+	const maxConcurrentNotifiers = 10
+
+	var (
+		errors    []error
+		errorsMux sync.Mutex // 保护errors切片的并发安全
+		wg        sync.WaitGroup
+		semaphore = make(chan struct{}, maxConcurrentNotifiers) // 信号量，限制并发数
+	)
+
+	// 遍历所有通知服务，为每个启动一个协程
 	for _, notifierName := range appConfig.Notifiers {
+		// 提前检查通知服务是否存在和启用
 		notifierInstance, exists := app.notifiers[notifierName]
 		if !exists {
+			errorsMux.Lock()
 			errors = append(errors, fmt.Errorf("通知服务 %s 不存在", notifierName))
+			errorsMux.Unlock()
 			continue
 		}
 
 		if !notifierInstance.IsEnabled() {
+			errorsMux.Lock()
 			errors = append(errors, fmt.Errorf("通知服务 %s 未启用", notifierName))
+			errorsMux.Unlock()
 			continue
 		}
-		// 发送通知
-		if err := notifierInstance.Send(ctx, message, targets); err != nil {
-			errors = append(errors, fmt.Errorf("通知服务 %s 发送失败: %w", notifierName, err))
-		}
+
+		// 为每个有效的通知服务启动协程
+		wg.Add(1)
+		go func(name string, notifier notifier.Notifier) {
+			defer wg.Done()
+
+			// 获取信号量，控制并发数
+			semaphore <- struct{}{}
+			defer func() { <-semaphore }()
+
+			// 发送通知
+			if err := notifier.Send(ctx, message, targets); err != nil {
+				errorsMux.Lock()
+				errors = append(errors, fmt.Errorf("通知服务 %s 发送失败: %w", name, err))
+				errorsMux.Unlock()
+			}
+		}(notifierName, notifierInstance)
 	}
+
+	// 等待所有协程完成
+	wg.Wait()
 
 	// 如果有错误，返回合并的错误信息
 	if len(errors) > 0 {
