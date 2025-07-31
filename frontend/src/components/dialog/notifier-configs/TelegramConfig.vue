@@ -3,7 +3,7 @@
     <v-text-field v-model="config.bot_token" label="Bot Token *" :rules="[rules.required]" hint="从 @BotFather 获取"
       persistent-hint class="mb-4" @input="handleConfigChange"></v-text-field>
 
-    <v-text-field v-model="config.chat_id" label="Chat ID *" :rules="[rules.required]" hint="群组或频道ID，可以是负数"
+    <v-text-field v-model="config.chat_id" label="Chat ID *" :rules="[rules.required]" hint="群组或频道ID，可以是负数, 多个用逗号分隔"
       persistent-hint class="mb-4" @input="handleConfigChange"></v-text-field>
 
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint

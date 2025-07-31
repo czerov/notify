@@ -4,7 +4,8 @@
       @input="handleConfigChange"></v-text-field>
 
     <v-text-field v-model="config.secret" label="签名密钥 *" class="mb-4" @input="handleConfigChange"></v-text-field>
-    <v-text-field v-model="config.targets" label="目标 *" class="mb-4" @input="handleConfigChange"></v-text-field>
+    <v-text-field v-model="config.targets" label="目标 *" hint="用户手机号或用户id，多个用逗号分隔" class="mb-4" persistent-hint
+      @input="handleConfigChange"></v-text-field>
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint
       class="mb-4" @input="handleConfigChange"></v-text-field>
 
