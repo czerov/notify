@@ -24,6 +24,58 @@ var funcMap = template.FuncMap{
 	"replaceAll": strings.ReplaceAll,
 	"split":      strings.Split,
 	"join":       strings.Join,
+	// 数学运算函数
+	"mul": func(a, b interface{}) float64 {
+		var x, y float64
+		switch v := a.(type) {
+		case int:
+			x = float64(v)
+		case int64:
+			x = float64(v)
+		case float64:
+			x = v
+		case float32:
+			x = float64(v)
+		}
+		switch v := b.(type) {
+		case int:
+			y = float64(v)
+		case int64:
+			y = float64(v)
+		case float64:
+			y = v
+		case float32:
+			y = float64(v)
+		}
+		return x * y
+	},
+	"div": func(a, b interface{}) float64 {
+		var x, y float64
+		switch v := a.(type) {
+		case int:
+			x = float64(v)
+		case int64:
+			x = float64(v)
+		case float64:
+			x = v
+		case float32:
+			x = float64(v)
+		}
+		switch v := b.(type) {
+		case int:
+			y = float64(v)
+		case int64:
+			y = float64(v)
+		case float64:
+			y = v
+		case float32:
+			y = float64(v)
+		}
+		if y == 0 {
+			return 0
+		}
+		return x / y
+	},
 }
 
 // NotificationApp 通知应用
