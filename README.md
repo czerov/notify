@@ -10,8 +10,8 @@
 
 ### 🚀 多渠道通知支持
 - **企业微信（WeChat Work）** - 支持多应用配置
-- **钉钉（DingTalk）** - 支持群聊机器人
-- **Telegram** - tg bot消息
+- **钉钉（DingTalk）** - 支持群聊机器人, 信息内容支持markdown语法
+- **Telegram** - tg机器人消息消息
 
 ### 📝 灵活的消息模板系统
 - 支持 Go Template 语法

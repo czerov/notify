@@ -105,18 +105,23 @@ func (d *DingTalkNotifier) Send(ctx context.Context, message *NotificationMessag
 
 	// 根据是否有图片选择不同的消息类型
 	var requestBody map[string]interface{}
-	if message.Image != "" {
-		requestBody = d.buildFeedCardMessage(message, targets)
-	} else {
-		requestBody = d.buildMarkdownMessage(message, targets)
-	}
+	// if message.Image != "" {
+	// 	requestBody = d.buildFeedCardMessage(message, targets)
+	// } else {
+	// 	requestBody = d.buildMarkdownMessage(message, targets)
+	// }
+	//全部用 markdown
+	requestBody = d.buildMarkdownMessage(message, targets)
 
 	return d.sendMessage(ctx, queryParams, requestBody)
 }
 
 // buildMarkdownMessage 构建Markdown消息
 func (d *DingTalkNotifier) buildMarkdownMessage(message *NotificationMessage, targets []string) map[string]interface{} {
-	content := fmt.Sprintf("**%s**\n\n%s", message.Title, message.Content)
+	content := message.Content
+	if message.Image != "" {
+		content = fmt.Sprintf("![](%s)\n\n%s", message.Image, message.Content)
+	}
 
 	requestBody := map[string]interface{}{
 		"msgtype": "markdown",
