@@ -1,10 +1,17 @@
 # Notify - 统一通知服务平台
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/jianxcao/notify?style=social)](https://github.com/jianxcao/notify/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/jianxcao/notify?style=social)](https://github.com/jianxcao/notify/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/jianxcao/notify)](https://github.com/jianxcao/notify/issues)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jianxcao/notify)](https://hub.docker.com/r/jianxcao/notify)
+<!-- [![GitHub release](https://img.shields.io/github/v/release/jianxcao/notify)](https://github.com/jianxcao/notify/releases) -->
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org/)
 [![Vue Version](https://img.shields.io/badge/Vue-3.5+-green.svg)](https://vuejs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/jianxcao/notify/pulls)
 
 一个功能强大、易于扩展的统一通知服务平台，支持多种通知渠道，提供灵活的消息模板和应用管理功能。
+
 
 ## ✨ 功能特性
 
@@ -26,6 +33,21 @@
 - 支持应用级别的 Token 认证
 - 管理界面 Basic Auth 保护
 - 灵活的认证策略配置
+
+> 🛡️ **安全提醒**  
+> 1. **修改默认密码**：首次部署后请立即修改默认的管理员账号密码（admin/password123）  
+> 2. **使用强密码**：设置复杂的密码，包含大小写字母、数字和特殊字符  
+> 3. **启用认证**：为所有通知应用配置安全的 Token 认证，避免未授权访问  
+> 4. **网络安全**：生产环境中建议使用 HTTPS 并限制访问IP范围  
+> 5. **定期更新**：定期更新系统和依赖包，关注安全公告  
+> 6. **备份配置**：定期备份配置文件，避免数据丢失  
+
+> 🛡️ **重要声明** 
+
+> 1. 本项目仅供学习和个人使用
+> 2. 请勿将部署的实例用于商业用途或公开服务
+> 3. 如因公开分享导致的任何法律问题，用户需自行承担责任
+> 4. 项目开发者不对用户的使用行为承担任何法律责任
 
 ### 🎨 现代化 Web 管理界面
 - **基于 Vue 3 + Vuetify** 的响应式界面
@@ -388,7 +410,29 @@ notify/
 | `CONFIG_FILE` | 配置文件路径 | `config/config.yaml` |
 | `PORT` | 服务监听端口 | `:8088` |
 
+
+<!-- ### ☕ 支持项目
+
+如果这个项目对您有帮助，可以请我们喝杯咖啡 ☕
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/jianxcao)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/jianxcao) -->
+
+## 🌟 项目统计
+
+![Star History Chart](https://api.star-history.com/svg?repos=jianxcao/notify&type=Date)
+
+
 ## 📝 许可证
 
 本项目采用 [MIT 许可证](LICENSE) 开源，您可以自由使用、修改和分发。
 
+---
+
+<div align="center">
+
+**🌟 如果这个项目对您有帮助，请给它一个Star！🌟**
+
+Made with ❤️ by [Your Name](https://github.com/jianxcao)
+
+</div>
