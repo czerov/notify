@@ -59,7 +59,12 @@
               <pre class="text-caption">{{ template.image }}</pre>
             </v-card>
           </v-card-text>
-
+          <v-card-text>
+            <div class="text-body-2 mb-2">目标:</div>
+            <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
+              <pre class="text-caption">{{ template.targets }}</pre>
+            </v-card>
+          </v-card-text>
           <v-card-actions>
             <v-btn variant="flat" size="small" @click="editTemplate(template)" :loading="templatesStore.loading">
               <v-icon icon="mdi-pencil" class="mr-1"></v-icon>

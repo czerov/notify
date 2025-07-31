@@ -4,7 +4,7 @@
       @input="handleConfigChange"></v-text-field>
 
     <v-text-field v-model="config.secret" label="签名密钥 *" class="mb-4" @input="handleConfigChange"></v-text-field>
-
+    <v-text-field v-model="config.targets" label="目标 *" class="mb-4" @input="handleConfigChange"></v-text-field>
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint
       class="mb-4" @input="handleConfigChange"></v-text-field>
   </div>
@@ -30,6 +30,7 @@ const config = ref<Partial<DingTalkConfig>>({
   access_token: '',
   secret: '',
   proxy: '',
+  targets: '',
   ...props.modelValue
 })
 
@@ -53,6 +54,7 @@ watch(() => props.modelValue, (newValue) => {
     access_token: '',
     secret: '',
     proxy: '',
+    targets: '',
     ...newValue
   }
 }, { deep: true })

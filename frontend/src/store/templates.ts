@@ -12,6 +12,7 @@ export interface IMessageTemplate {
   title: string
   image: string
   url: string
+  targets: string
 }
 
 export const useTemplatesStore = defineStore('templates', () => {

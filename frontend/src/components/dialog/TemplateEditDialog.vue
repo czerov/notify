@@ -19,6 +19,8 @@
                 :rules="[rules.required]" class="mb-4"></v-text-field>
               <v-text-field v-model="form.image" label="图片" hint="支持Go模板语法，如{{.image}}" persistent-hint
                 :rules="[rules.required]" class="mb-4"></v-text-field>
+              <v-text-field v-model="form.targets" label="目标" hint="支持Go模板语法，如 {{.targets}}" persistent-hint
+                :rules="[rules.required]" class="mb-4"></v-text-field>
             </v-form>
           </v-col>
           <v-col cols="12" md="6">
@@ -90,6 +92,7 @@ const form = ref({
   content: '{{.content}}',
   url: '{{.url}}',
   image: '{{.image}}',
+  targets: '{{.targets}}',
 })
 
 const expanded = ref<number | undefined>()
@@ -116,6 +119,7 @@ const templateVariables = [
   { name: '{{.image}}', description: '图片URL' },
   { name: '{{.url}}', description: '链接URL' },
   { name: '{{.timestamp}}', description: '时间戳' },
+  { name: '{{.targets}}', description: '目标' },
   { name: '{{if .url}}...{{end}}', description: '条件渲染' }
 ]
 
@@ -129,6 +133,7 @@ watch(() => props.editingTemplate, (template) => {
       content: template.content,
       url: template.url,
       image: template.image,
+      targets: template.targets,
     }
   } else {
     form.value = {
@@ -138,6 +143,7 @@ watch(() => props.editingTemplate, (template) => {
       content: '{{.content}}',
       url: '{{.url}}',
       image: '{{.image}}',
+      targets: '{{.targets}}',
     }
   }
 }, { immediate: true })

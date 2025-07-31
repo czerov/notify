@@ -7,9 +7,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"notify/internal/config"
+	"notify/internal/utils"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -86,6 +88,9 @@ func (d *DingTalkNotifier) Send(ctx context.Context, message *NotificationMessag
 	if !d.config.Enabled {
 		return fmt.Errorf("钉钉通知服务未启用")
 	}
+	if len(targets) == 0 && d.config.Targets != "" {
+		targets = strings.Split(d.config.Targets, ",")
+	}
 
 	// 构建查询参数
 	queryParams := map[string]string{
@@ -130,11 +135,21 @@ func (d *DingTalkNotifier) buildMarkdownMessage(message *NotificationMessage, ta
 			"text":  content,
 		},
 	}
-
+	// 使用正则表达式检测 target 是不是一个有效的手机号，是手机号的放在一起，其他类型的放在一起
+	phoneTargets := []string{}
+	otherTargets := []string{}
+	for _, target := range targets {
+		if utils.IsMobilePhone(target) {
+			phoneTargets = append(phoneTargets, target)
+		} else {
+			otherTargets = append(otherTargets, target)
+		}
+	}
 	// 如果指定了@用户
 	if len(targets) > 0 {
 		requestBody["at"] = map[string]interface{}{
-			"atMobiles": targets,
+			"atMobiles": phoneTargets,
+			"atUserIds": otherTargets,
 			"isAtAll":   false,
 		}
 	}

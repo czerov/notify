@@ -115,6 +115,9 @@ func (w *WechatWorkNotifier) Send(ctx context.Context, message *NotificationMess
 	if !w.config.Enabled {
 		return fmt.Errorf("企业微信通知服务未启用")
 	}
+	if len(targets) == 0 && w.config.Targets != "" {
+		targets = strings.Split(w.config.Targets, ",")
+	}
 
 	// 获取访问令牌
 	if err := w.getAccessToken(ctx); err != nil {

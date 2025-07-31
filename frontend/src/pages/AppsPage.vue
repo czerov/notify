@@ -147,7 +147,6 @@
 import LoadingView from '@/components/LoadingView.vue'
 import AppEditDialog from '@/components/dialog/AppEditDialog.vue'
 import TestNotificationDialog from '@/components/dialog/TestNotificationDialog.vue'
-import HelpDialog from '@/components/dialog/NotifyHelpDialog.vue'
 import { useAppsStore } from '@/store/apps'
 import { useNotifiersStore } from '@/store/notifiers'
 import { useTemplatesStore } from '@/store/templates'

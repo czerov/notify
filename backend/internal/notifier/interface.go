@@ -4,12 +4,11 @@ import "context"
 
 // NotificationMessage 通知消息结构
 type NotificationMessage struct {
-	Title     string   `json:"title"`
-	Content   string   `json:"content"`
-	Timestamp string   `json:"timestamp"`
-	Image     string   `json:"image"` // 图片URL或路径
-	URL       string   `json:"url"`   // 点击跳转的URL
-	Targets   []string `json:"targets"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+	Timestamp string `json:"timestamp"`
+	Image     string `json:"image"` // 图片URL或路径
+	URL       string `json:"url"`   // 点击跳转的URL
 }
 
 // Notifier 通知服务接口

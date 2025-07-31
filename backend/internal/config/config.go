@@ -42,6 +42,7 @@ type WechatWorkConfig struct {
 	CorpID  string `yaml:"corp_id" json:"corpId"`
 	AgentID string `yaml:"agent_id" json:"agentId"`
 	Secret  string `yaml:"secret" json:"secret"`
+	Targets string `yaml:"targets" json:"targets"`
 	Proxy   string `yaml:"proxy" json:"proxy"` // 代理服务器地址，格式: http://proxy.example.com:8080
 }
 
@@ -58,6 +59,7 @@ type DingTalkConfig struct {
 	Enabled     bool   `yaml:"enabled" json:"enabled"`
 	AccessToken string `yaml:"access_token" json:"accessToken"`
 	Secret      string `yaml:"secret" json:"secret"`
+	Targets     string `yaml:"targets" json:"targets"`
 	Proxy       string `yaml:"proxy" json:"proxy"` // 代理服务器地址，格式: http://proxy.example.com:8080
 }
 
@@ -87,6 +89,7 @@ type MessageTemplate struct {
 	Content string `yaml:"content" json:"content"` // 内容
 	Image   string `yaml:"image" json:"image"`     // 图片
 	URL     string `yaml:"url" json:"url"`         // 链接
+	Targets string `yaml:"targets" json:"targets"` // 目标
 }
 
 // ConfigManager 配置管理器

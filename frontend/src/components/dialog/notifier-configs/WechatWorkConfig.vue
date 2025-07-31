@@ -9,6 +9,8 @@
     <v-text-field v-model="config.secret" label="应用密钥 *" :rules="[rules.required]" class="mb-4"
       @input="handleConfigChange"></v-text-field>
 
+    <v-text-field v-model="config.targets" label="目标 *" class="mb-4" @input="handleConfigChange"></v-text-field>
+
     <v-text-field v-model="config.proxy" label="代理服务器" hint="可选，格式: http://proxy.example.com:8080" persistent-hint
       class="mb-4" @input="handleConfigChange"></v-text-field>
   </div>
@@ -35,6 +37,7 @@ const config = ref<Partial<WechatWorkConfig>>({
   agent_id: '',
   secret: '',
   proxy: '',
+  targets: '',
   ...props.modelValue
 })
 
@@ -50,6 +53,7 @@ watch(() => props.modelValue, (newValue) => {
     agent_id: '',
     secret: '',
     proxy: '',
+    targets: '',
     ...newValue
   }
 }, { deep: true })

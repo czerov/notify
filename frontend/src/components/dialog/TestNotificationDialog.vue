@@ -9,6 +9,7 @@
           <v-textarea v-model="form.content" label="内容" rows="3" class="mb-4"></v-textarea>
           <v-text-field v-model="form.image" label="图片" class="mb-4"></v-text-field>
           <v-text-field v-model="form.url" label="链接URL" class="mb-4"></v-text-field>
+          <v-text-field v-model="form.targets" label="目标" class="mb-4"></v-text-field>
 
           <!-- 动态字段 -->
           <v-divider class="my-4"></v-divider>
@@ -62,6 +63,7 @@ interface TestNotificationData {
   content: string
   url: string
   image: string
+  targets: string
   [key: string]: any
 }
 
@@ -88,7 +90,8 @@ const form = ref<TestNotificationData>({
   title: '测试通知',
   content: '这是一条测试通知消息',
   url: '',
-  image: ''
+  image: '',
+  targets: ''
 })
 
 // 动态字段
@@ -114,7 +117,8 @@ watch(dialogVisible, (visible) => {
       title: '测试通知',
       content: '这是一条测试通知消息',
       url: '',
-      image: ''
+      image: '',
+      targets: ''
     }
     customFields.value = []
   }

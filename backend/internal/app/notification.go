@@ -82,6 +82,9 @@ func (app *NotificationApp) parseWechatWorkConfig(configData map[string]interfac
 	if proxy, ok := configData["proxy"].(string); ok {
 		cfg.Proxy = proxy
 	}
+	if targets, ok := configData["targets"].(string); ok {
+		cfg.Targets = targets
+	}
 
 	if cfg.CorpID == "" || cfg.AgentID == "" || cfg.Secret == "" {
 		return cfg, fmt.Errorf("企业微信配置不完整")
@@ -124,6 +127,9 @@ func (app *NotificationApp) parseDingTalkConfig(configData map[string]interface{
 	if proxy, ok := configData["proxy"].(string); ok {
 		cfg.Proxy = proxy
 	}
+	if targets, ok := configData["targets"].(string); ok {
+		cfg.Targets = targets
+	}
 
 	if cfg.AccessToken == "" {
 		return cfg, fmt.Errorf("钉钉配置不完整")
@@ -163,7 +169,11 @@ func (app *NotificationApp) Send(ctx context.Context, appConfig config.Notificat
 	if image == "" {
 		image = appConfig.DefaultImage
 	}
-
+	targetsStr, _ := app.renderTemplate(appConfig.TemplateID+"_targets", template.Targets, req)
+	targets := []string{}
+	if targetsStr != "" {
+		targets = strings.Split(targetsStr, ",")
+	}
 	// 创建通知消息
 	message := &notifier.NotificationMessage{
 		Title:     title,
@@ -188,9 +198,8 @@ func (app *NotificationApp) Send(ctx context.Context, appConfig config.Notificat
 			errors = append(errors, fmt.Errorf("通知服务 %s 未启用", notifierName))
 			continue
 		}
-		// TODO: 获取该通知服务的目标列表
 		// 发送通知
-		if err := notifierInstance.Send(ctx, message, []string{}); err != nil {
+		if err := notifierInstance.Send(ctx, message, targets); err != nil {
 			errors = append(errors, fmt.Errorf("通知服务 %s 发送失败: %w", notifierName, err))
 		}
 	}

@@ -94,6 +94,7 @@ export interface WechatWorkConfig {
   corp_id: string
   agent_id: string
   secret: string
+  targets?: string
   proxy?: string
 }
 
@@ -111,6 +112,7 @@ export interface DingTalkConfig {
   access_token: string
   secret?: string
   proxy?: string
+  targets?: string
 }
 
 // 通知服务配置联合类型
