@@ -356,6 +356,30 @@ templates:
 - 标准字段：`{{.title}}`、`{{.content}}`、`{{.timestamp}}`
 - 自定义字段：通过请求参数传入的任意字段，这些字段皆可以在模板中配置
 
+#### EMBY播放消息模板
+
+``` yaml
+{
+  "version": "1.0",
+  "exportTime": "2025-07-31T13:47:13.450Z",
+  "exportType": "single",
+  "templates": [
+    {
+      "id": "emby_status",
+      "name": "emby播放通知",
+      "title": "{{.Title}}",
+      "content": "{{- if and .Event (hasPrefix .Event \"playback\") -}}\n📅 时间: {{ .Description }}\n👤 用户: {{ .User.Name }}\n📱 设备: {{ .Session.DeviceName }} ({{ .Session.Client }})\n{{- if and .Item.RunTimeTicks .PlaybackInfo.PositionTicks }}\n⏱️ 播放进度: {{ printf \"%.1f%%\" (mul (div .PlaybackInfo.PositionTicks .Item.RunTimeTicks) 100) }}\n{{- end }}\n🎬 剧集标题: {{ .Item.Name }}\n📺 剧集: {{ .Item.SeriesName }} - {{ .Item.SeasonName }}\n🎯 类型: {{ .Item.MediaType }}\n🗓️ 年份: {{ .Item.ProductionYear }}\n{{- end }}",
+      "image": "{{- if .Event -}} {{- if and .Event (hasPrefix .Event \"playback\") -}} {{- if .Item.ImageTags -}} {{- if .Item.ImageTags.Primary -}} {{ printf \"你的公网emby地址/emby/Items/%s/Images/Primary?tag=%s&quality=90\" .Item.Id .Item.ImageTags.Primary }} {{- end -}} {{- end -}} {{- end -}} {{- end }}",
+      "url": "{{.url}}",
+      "targets": "{{.targets}}"
+    }
+  ]
+}
+
+```
+
+> 说明，emby 播放进度必须有公网地址才可以出现播放的图片，要不然只能用固定图片显示
+> 在模板配置中直接导入即可使用
 ## 🔧 API 文档
 
 ### 通知接口
