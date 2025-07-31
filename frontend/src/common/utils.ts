@@ -217,3 +217,40 @@ export function formatErrorMessage(error: any): string {
   if (error?.message) return error.message
   return '发生未知错误'
 }
+
+/**
+ * 复制文本到剪贴板
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      // 现代浏览器的 Clipboard API
+      await navigator.clipboard.writeText(text)
+      return true
+    } else {
+      // 降级方案：使用传统的 execCommand
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      textArea.style.top = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+
+      const success = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      return success
+    }
+  } catch (error) {
+    console.error('复制到剪贴板失败:', error)
+    return false
+  }
+}
+
+/**
+ * 获取当前域名和端口
+ */
+export function getCurrentBaseUrl(): string {
+  return window.location.origin
+}

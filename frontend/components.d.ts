@@ -9,11 +9,14 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppEditDialog: typeof import('./src/components/dialog/AppEditDialog.vue')['default']
+    CodeBlock: typeof import('./src/components/CodeBlock.vue')['default']
     DingtalkConfig: typeof import('./src/components/dialog/notifier-configs/DingtalkConfig.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    HelpDialog: typeof import('./src/components/dialog/HelpDialog.vue')['default']
     Layout: typeof import('./src/components/Layout.vue')['default']
     LoadingView: typeof import('./src/components/LoadingView.vue')['default']
     NotifierEditDialog: typeof import('./src/components/dialog/NotifierEditDialog.vue')['default']
+    NotifyHelpDialog: typeof import('./src/components/dialog/NotifyHelpDialog.vue')['default']
     PageLoading: typeof import('./src/components/PageLoading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

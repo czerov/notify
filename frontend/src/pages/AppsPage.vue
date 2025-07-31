@@ -16,6 +16,10 @@
         </p>
       </v-col>
       <v-col cols="auto">
+        <v-btn color="info" variant="outlined" size="small" @click="showHelpDialog = true" class="mr-2">
+          <v-icon icon="mdi-help-circle" class="mr-2"></v-icon>
+          使用帮助
+        </v-btn>
         <v-btn color="primary" variant="flat" size="small" @click="showCreateDialog = true">
           <v-icon icon="mdi-plus" class="mr-2"></v-icon>
           创建应用
@@ -91,6 +95,11 @@
                     <v-icon></v-icon>
                     <v-tooltip activator="parent" location="bottom">测试通知</v-tooltip>
                   </v-btn>
+
+                  <v-btn icon="mdi-content-copy" @click="copyNotifyUrl(app)" variant="text" size="small" color="info">
+                    <v-icon></v-icon>
+                    <v-tooltip activator="parent" location="bottom">复制通知地址</v-tooltip>
+                  </v-btn>
                 </div>
 
                 <v-btn icon="mdi-delete" @click="deleteApp(app)" variant="text" size="small" color="error">
@@ -128,21 +137,30 @@
     <!-- 测试通知对话框 -->
     <TestNotificationDialog v-model="showTestDialog" :app="testingApp" :loading="appsStore.loading"
       @send="sendTestNotification" @cancel="showTestDialog = false" />
+
+    <!-- 帮助说明对话框 -->
+    <NotifyHelpDialog v-model="showHelpDialog" />
   </div>
 </template>
 
 <script setup lang="ts">
 import LoadingView from '@/components/LoadingView.vue'
+import AppEditDialog from '@/components/dialog/AppEditDialog.vue'
+import TestNotificationDialog from '@/components/dialog/TestNotificationDialog.vue'
+import HelpDialog from '@/components/dialog/NotifyHelpDialog.vue'
 import { useAppsStore } from '@/store/apps'
 import { useNotifiersStore } from '@/store/notifiers'
 import { useTemplatesStore } from '@/store/templates'
 import { computed, onMounted, ref } from 'vue'
 import { useConfirm } from 'vuetify-use-dialog'
+import { copyToClipboard, getCurrentBaseUrl } from '@/common/utils'
+import { useToast } from 'vue-toast-notification'
 
 const appsStore = useAppsStore()
 const notifiersStore = useNotifiersStore()
 const templatesStore = useTemplatesStore()
 const createConfirm = useConfirm()
+const toast = useToast()
 
 // 页面加载状态
 const pageLoading = ref(true)
@@ -152,6 +170,7 @@ const pageLoading = ref(true)
 // 对话框状态
 const showCreateDialog = ref(false)
 const showTestDialog = ref(false)
+const showHelpDialog = ref(false)
 
 // 编辑状态
 const editingApp = ref<any>(null)
@@ -184,6 +203,19 @@ const editApp = (app: any) => {
 const testApp = (app: any) => {
   testingApp.value = app
   showTestDialog.value = true
+}
+
+// 复制通知地址
+const copyNotifyUrl = async (app: any) => {
+  const baseUrl = getCurrentBaseUrl()
+  const notifyUrl = `${baseUrl}/api/v1/notify/${app.appId}`
+
+  const success = await copyToClipboard(notifyUrl)
+  if (success) {
+    toast.success(`已复制通知地址: ${notifyUrl}`)
+  } else {
+    toast.error('复制失败，请手动复制')
+  }
 }
 
 // 删除应用
