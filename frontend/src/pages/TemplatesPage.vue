@@ -27,9 +27,9 @@
       </v-col>
     </v-row>
 
-    <!-- 模板列表 -->
-    <v-row v-if="Object.keys(templatesStore.templates).length > 0">
-      <v-col v-for="(template, templateId) in templatesStore.templates" :key="templateId" cols="12" md="6" lg="4">
+    <!-- CSS Column 瀑布流模板列表 -->
+    <div v-if="Object.keys(templatesStore.templates).length > 0" class="masonry-container">
+      <div v-for="(template, templateId) in templatesStore.templates" :key="templateId" class="masonry-item">
         <v-card class="template-card" elevation="2">
           <v-card-title class="d-flex align-center">
             <v-icon icon="mdi-file-document" color="primary" class="mr-3"></v-icon>
@@ -42,31 +42,31 @@
           <v-card-text class="template-item">
             <div class="text-body-2 mb-2">标题:</div>
             <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
-              <pre class="text-caption">{{ template.title }}</pre>
+              <pre class="text-caption">{{ template.title || '无内容' }}</pre>
             </v-card>
-          </v-card-text class="template-item">
+          </v-card-text>
           <v-card-text class="template-item">
             <div class="text-body-2 mb-2">内容:</div>
             <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
-              <pre class="text-caption">{{ template.content }}</pre>
+              <pre class="text-caption">{{ template.content || '无内容' }}</pre>
             </v-card>
-          </v-card-text class="template-item">
+          </v-card-text>
           <v-card-text class="template-item">
             <div class="text-body-2 mb-2">链接:</div>
             <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
-              <pre class="text-caption">{{ template.url }}</pre>
+              <pre class="text-caption">{{ template.url || '无内容' }}</pre>
             </v-card>
           </v-card-text>
           <v-card-text>
             <div class="text-body-2 mb-2">图片:</div>
             <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
-              <pre class="text-caption">{{ template.image }}</pre>
+              <pre class="text-caption">{{ template.image || '无内容' }}</pre>
             </v-card>
           </v-card-text>
           <v-card-text>
             <div class="text-body-2 mb-2">目标:</div>
             <v-card variant="outlined" class="template-preview pa-2" style="max-height: 150px; overflow-y: auto;">
-              <pre class="text-caption">{{ template.targets }}</pre>
+              <pre class="text-caption">{{ template.targets || '无内容' }}</pre>
             </v-card>
           </v-card-text>
           <v-card-actions>
@@ -85,8 +85,8 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
     <!-- 无数据状态 -->
     <v-row v-else-if="!templatesStore.loading">
@@ -245,5 +245,163 @@ pre {
 
 .template-item {
   padding-block: 8px;
+}
+
+/* CSS Column 瀑布流容器 */
+.masonry-container {
+  /* 基础多列布局 */
+  column-count: 3;
+  column-gap: 16px;
+  column-fill: balance;
+  /* 平衡各列高度 */
+  margin-top: 16px;
+
+  /* 避免列间断页 */
+  orphans: 1;
+  widows: 1;
+}
+
+/* 瀑布流项目 */
+.masonry-item {
+  /* 防止元素被分割到两列之间 */
+  break-inside: avoid;
+  page-break-inside: avoid;
+  /* 兼容旧版浏览器 */
+
+  /* 项目间距 */
+  margin-bottom: 16px;
+
+  /* 确保元素是块级的 */
+  display: block;
+  width: 100%;
+}
+
+/* 模板卡片样式 */
+.template-card {
+  width: 100%;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+
+  /* 防止卡片被分割 */
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* 卡片悬停效果 */
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 模板预览区域 */
+.template-preview {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+}
+
+/* 响应式断点 */
+@media (max-width: 1200px) {
+  .masonry-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .masonry-container {
+    column-count: 1;
+    column-gap: 0;
+    margin-top: 12px;
+  }
+
+  .masonry-item {
+    margin-bottom: 12px;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+  .template-card {
+    margin: 0;
+  }
+
+  .template-card .v-card-text {
+    padding: 8px 12px;
+  }
+
+  .template-card .v-card-actions {
+    padding: 6px 12px 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* 打印样式优化 */
+@media print {
+  .masonry-container {
+    column-count: 2;
+    column-gap: 20px;
+  }
+
+  .template-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* 加载状态 */
+.masonry-container.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 动画优化 */
+.masonry-item {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 确保在列布局中的良好展示 */
+.template-card .v-card-title,
+.template-card .v-card-text,
+.template-card .v-card-actions {
+  break-inside: avoid;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .template-card {
+    border: 2px solid #000;
+  }
+
+  .template-preview {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid #666;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+
+  .template-card,
+  .masonry-item {
+    transition: none;
+    animation: none;
+  }
+
+  .template-card:hover {
+    transform: none;
+  }
 }
 </style>
