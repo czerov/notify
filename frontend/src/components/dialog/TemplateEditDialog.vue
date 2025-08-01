@@ -15,12 +15,12 @@
                 :rules="[rules.required]" rows="3" auto-grow class="mb-4"></v-textarea>
               <v-textarea v-model="form.content" label="内容" hint="支持Go模板语法，如 {{.Content}}" persistent-hint
                 :rules="[rules.required]" rows="3" auto-grow class="mb-4"></v-textarea>
-              <v-text-field v-model="form.url" label="链接" hint="支持Go模板语法，如  {{.url}}" persistent-hint
-                :rules="[rules.required]" class="mb-4"></v-text-field>
-              <v-text-field v-model="form.image" label="图片" hint="支持Go模板语法，如{{.image}}" persistent-hint
-                :rules="[rules.required]" class="mb-4"></v-text-field>
-              <v-text-field v-model="form.targets" label="目标" hint="支持Go模板语法，如 {{.targets}}" persistent-hint
-                :rules="[rules.required]" class="mb-4"></v-text-field>
+              <v-textarea v-model="form.url" label="链接" hint="支持Go模板语法，如  {{.url}}" persistent-hint
+                :rules="[rules.required]" rows="2" auto-grow class="mb-4"></v-textarea>
+              <v-textarea v-model="form.image" label="图片" hint="支持Go模板语法，如{{.image}}" persistent-hint
+                :rules="[rules.required]" rows="2" auto-grow class="mb-4"></v-textarea>
+              <v-textarea v-model="form.targets" label="目标" hint="支持Go模板语法，如 {{.targets}}" persistent-hint
+                :rules="[rules.required]" rows="2" auto-grow class="mb-4"></v-textarea>
             </v-form>
           </v-col>
           <v-col cols="12" md="6">
