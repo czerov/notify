@@ -127,12 +127,6 @@ services:
       - LOG_LEVEL=info
       - LOG_FORMAT=text
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6666/api/v1/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 ```
 
 2. **启动服务**：
