@@ -91,7 +91,7 @@
 
               <v-list-item>
                 <template v-slot:prepend>
-                  <v-icon :icon="systemStatus.config ? 'mdi-cog-check' : 'mdi-cog-off'"
+                  <v-icon :icon="systemStatus.config ? 'mdi:cog' : 'mdi:cog-off'"
                     :color="systemStatus.config ? 'success' : 'error'"></v-icon>
                 </template>
                 <v-list-item-title>配置状态</v-list-item-title>
