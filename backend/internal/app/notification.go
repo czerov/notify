@@ -26,6 +26,37 @@ var funcMap = template.FuncMap{
 	"strReplaceAll": strings.ReplaceAll,
 	"strSplit":      strings.Split,
 	"strJoin":       strings.Join,
+	// 时间格式化函数
+	"formatTime": func(timeStr string, layout string) string {
+		if timeStr == "" {
+			return ""
+		}
+		// 解析RFC3339格式的时间字符串
+		t, err := time.Parse(time.RFC3339, timeStr)
+		if err != nil {
+			// 如果解析失败，尝试解析带纳秒的格式
+			t, err = time.Parse(time.RFC3339Nano, timeStr)
+			if err != nil {
+				return timeStr // 如果都解析失败，返回原字符串
+			}
+		}
+		// 转换为本地时间
+		localTime := t.Local()
+		return localTime.Format(layout)
+	},
+	"formatTimeUTC": func(timeStr string, layout string) string {
+		if timeStr == "" {
+			return ""
+		}
+		t, err := time.Parse(time.RFC3339, timeStr)
+		if err != nil {
+			t, err = time.Parse(time.RFC3339Nano, timeStr)
+			if err != nil {
+				return timeStr
+			}
+		}
+		return t.Format(layout)
+	},
 	// 数学运算函数
 	"mul": func(a, b interface{}) float64 {
 		var x, y float64
