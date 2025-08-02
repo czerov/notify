@@ -15,15 +15,17 @@ import (
 )
 
 var funcMap = template.FuncMap{
-	"contains":   strings.Contains,
-	"hasSuffix":  strings.HasSuffix,
-	"hasPrefix":  strings.HasPrefix,
-	"index":      strings.Index,
-	"lastIndex":  strings.LastIndex,
-	"replace":    strings.Replace,
-	"replaceAll": strings.ReplaceAll,
-	"split":      strings.Split,
-	"join":       strings.Join,
+	"strContains":   strings.Contains,
+	"hasSuffix":     strings.HasSuffix,
+	"hasPrefix":     strings.HasPrefix,
+	"strHasSuffix":  strings.HasSuffix,
+	"strHasPrefix":  strings.HasPrefix,
+	"strIndex":      strings.Index,
+	"strLastIndex":  strings.LastIndex,
+	"strReplace":    strings.Replace,
+	"strReplaceAll": strings.ReplaceAll,
+	"strSplit":      strings.Split,
+	"strJoin":       strings.Join,
 	// 数学运算函数
 	"mul": func(a, b interface{}) float64 {
 		var x, y float64
