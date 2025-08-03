@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"notify/internal/config"
+	"notify/internal/logger"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -166,6 +167,8 @@ func (t *TelegramNotifier) sendRequest(ctx context.Context, apiURL string, reque
 	if err != nil {
 		return fmt.Errorf("发送请求失败: %w", err)
 	}
+	body := resp.Body()
+	logger.Debug("telegram response: %s", string(body))
 
 	if !resp.IsSuccess() {
 		return fmt.Errorf("HTTP请求失败，状态码: %d", resp.StatusCode())
