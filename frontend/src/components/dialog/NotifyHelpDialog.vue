@@ -31,6 +31,7 @@
               <h5 class="mb-2">启用认证的应用</h5>
               <p class="text-body-2">需要在请求头中携带认证令牌：</p>
               <CodeBlock code="Authorization: Bearer 您的访问令牌" />
+              <CodeBlock code="http://localhost:5174/api/v1/notify/appid?token=您的访问令牌" />
             </div>
             <div>
               <h5 class="mb-2">未启用认证的应用</h5>
