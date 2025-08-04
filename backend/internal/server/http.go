@@ -105,9 +105,6 @@ func (s *HTTPServer) setupStaticRoutes() {
 
 	logger.Info("启用前端静态文件服务", "dir", staticDir)
 
-	// 提供静态文件服务
-	s.router.Static("/assets", filepath.Join(staticDir, "assets"))
-
 	// 根路径重定向到index.html
 	s.router.GET("/", func(c *gin.Context) {
 		c.File(filepath.Join(staticDir, "index.html"))
@@ -117,12 +114,7 @@ func (s *HTTPServer) setupStaticRoutes() {
 		c.Status(http.StatusOK)
 	})
 
-	// 处理favicon.ico等静态资源
-	s.router.GET("/favicon.ico", func(c *gin.Context) {
-		c.File(filepath.Join(staticDir, "/assets/logo.svg"))
-	})
-
-	// 处理前端路由 - 只有非API路径才返回index.html
+	// 处理所有非API路径的静态文件服务
 	s.router.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
 
@@ -131,9 +123,16 @@ func (s *HTTPServer) setupStaticRoutes() {
 			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
 			return
 		}
-
-		// 其他路径（前端路由）返回index.html
-		c.File(filepath.Join(staticDir, "index.html"))
+		fs := gin.Dir(staticDir, false)
+		fileServerStatic := http.StripPrefix("/", http.FileServer(fs))
+		file, err := fs.Open(c.Request.URL.Path)
+		if err != nil {
+			c.File(filepath.Join(staticDir, "index.html"))
+			return
+		} else {
+			fileServerStatic.ServeHTTP(c.Writer, c.Request)
+		}
+		defer file.Close()
 	})
 }
 

@@ -75,11 +75,11 @@ export default defineConfig({
       manifest: {
         name: 'Notify',
         short_name: 'Notify',
-        start_url: '/strm/',
+        start_url: '/',
         display: 'standalone',
         icons: [
           {
-            src: '/strm/img/logo/logo.png',
+            src: '/logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any',
