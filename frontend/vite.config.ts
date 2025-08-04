@@ -77,10 +77,18 @@ export default defineConfig({
         short_name: 'Notify',
         start_url: '/',
         display: 'standalone',
+        id: '/',
+        screenshots: [
+          {
+            src: '/bg.png',
+            sizes: '742x1332',
+            type: 'image/png',
+          },
+        ],
         icons: [
           {
             src: '/logo.png',
-            sizes: '512x512',
+            sizes: '1024x1024',
             type: 'image/png',
             purpose: 'any',
           },

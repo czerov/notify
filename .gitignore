@@ -29,3 +29,5 @@ test.sh
 __debug*
 
 .config
+
+dev-dist
