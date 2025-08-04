@@ -268,6 +268,15 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
+.header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.navigation-drawer {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 @supports (backdrop-filter: blur(30px)) {
   .header {
     background-color: rgba(var(--v-theme-background), 0.5);

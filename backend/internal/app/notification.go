@@ -168,6 +168,13 @@ func (app *NotificationApp) InitNotifiers() {
 				dingtalkNotifier := notifier.NewDingTalkNotifier(config)
 				app.notifiers[instanceName] = dingtalkNotifier
 			}
+		case config.FeishuAppBot:
+			// 将map[string]interface{}转换为FeishuConfig
+			if config, err := app.parseFeishuConfig(instance.Config); err == nil {
+				config.Enabled = instance.Enabled
+				feishuNotifier := notifier.NewFeishuNotifier(config)
+				app.notifiers[instanceName] = feishuNotifier
+			}
 		}
 	}
 	logger.Debug("notifiers", cfg.Notifiers)
@@ -258,6 +265,32 @@ func (app *NotificationApp) parseDingTalkConfig(configData map[string]interface{
 
 	if cfg.AccessToken == "" {
 		return cfg, fmt.Errorf("钉钉配置不完整")
+	}
+
+	return cfg, nil
+}
+
+// parseFeishuConfig 解析飞书配置
+func (app *NotificationApp) parseFeishuConfig(configData map[string]interface{}) (config.FeishuConfig, error) {
+	cfg := config.FeishuConfig{}
+
+	if appID, ok := configData["app_id"].(string); ok {
+		cfg.AppID = appID
+	}
+	if appSecret, ok := configData["app_secret"].(string); ok {
+		cfg.AppSecret = appSecret
+	}
+
+	if proxy, ok := configData["proxy"].(string); ok {
+		cfg.Proxy = proxy
+	}
+	if targets, ok := configData["targets"].(string); ok {
+		cfg.Targets = targets
+	}
+
+	// 需要配置应用ID和密钥
+	if cfg.AppID == "" || cfg.AppSecret == "" {
+		return cfg, fmt.Errorf("飞书配置不完整：需要配置AppID和AppSecret")
 	}
 
 	return cfg, nil
@@ -443,6 +476,10 @@ func (app *NotificationApp) ValidateConfig() error {
 		case config.DingTalkAppBot:
 			if _, err := app.parseDingTalkConfig(instance.Config); err != nil {
 				return fmt.Errorf("通知服务实例 %s (钉钉) 配置错误: %v", instanceName, err)
+			}
+		case config.FeishuAppBot:
+			if _, err := app.parseFeishuConfig(instance.Config); err != nil {
+				return fmt.Errorf("通知服务实例 %s (飞书) 配置错误: %v", instanceName, err)
 			}
 		default:
 			return fmt.Errorf("通知服务实例 %s 使用了未知的类型: %s", instanceName, instance.Type)

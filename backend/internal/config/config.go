@@ -14,6 +14,7 @@ var (
 	WechatWorkWebhookBot NotifiersType = "wechatWorkWebhookBot"
 	TelegramAppBot       NotifiersType = "telegramAppBot"
 	DingTalkAppBot       NotifiersType = "dingTalkAppBot"
+	FeishuAppBot         NotifiersType = "feishuAppBot"
 )
 
 // LoggerConfig 日志配置
@@ -69,6 +70,16 @@ type DingTalkConfig struct {
 	Secret      string `yaml:"secret" json:"secret"`
 	Targets     string `yaml:"targets" json:"targets"`
 	Proxy       string `yaml:"proxy" json:"proxy"` // 代理服务器地址，格式: http://proxy.example.com:8080
+}
+
+// FeishuConfig 飞书配置
+type FeishuConfig struct {
+	Enabled   bool   `yaml:"enabled" json:"enabled"`
+	AppID     string `yaml:"app_id" json:"appId"`         // 飞书应用ID
+	AppSecret string `yaml:"app_secret" json:"appSecret"` // 飞书应用密钥
+
+	Targets string `yaml:"targets" json:"targets"` // 默认发送目标(用户ID或群ID)
+	Proxy   string `yaml:"proxy" json:"proxy"`     // 代理服务器地址，格式: http://proxy.example.com:8080
 }
 
 // NotificationApp 通知应用配置

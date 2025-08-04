@@ -11,9 +11,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-app>
+  <v-app class="app">
     <router-view />
   </v-app>
 </template>
 
-<style></style>
+<style lang="less" scoped>
+.app {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #28243D;
+}
+</style>

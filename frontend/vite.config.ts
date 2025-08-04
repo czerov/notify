@@ -7,6 +7,7 @@ import { fileURLToPath, URL } from 'node:url'
 import svgLoader from 'vite-svg-loader'
 import AutoImport from 'unplugin-auto-import/vite'
 import vuetify from 'vite-plugin-vuetify'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -54,6 +55,39 @@ export default defineConfig({
     Components({
       resolvers: [NaiveUiResolver()],
       dts: true,
+    }),
+    VitePWA({
+      injectRegister: 'script',
+      registerType: 'autoUpdate',
+      // strategies: 'injectManifest',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg}'],
+        navigateFallbackDenylist: [/.*\/api\/v\d+\/system\/logging.*/],
+        disableDevLogs: true,
+      },
+      injectManifest: {
+        rollupFormat: 'iife',
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
+      manifest: {
+        name: 'Notify',
+        short_name: 'Notify',
+        start_url: '/strm/',
+        display: 'standalone',
+        icons: [
+          {
+            src: '/strm/img/logo/logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+        ],
+        theme_color: '#28243D',
+        background_color: '#28243D',
+      },
     }),
   ],
   server: {

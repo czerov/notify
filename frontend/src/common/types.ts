@@ -75,12 +75,14 @@ export type NotifierType =
   | 'wechatWorkWebhookBot'
   | 'telegramAppBot'
   | 'dingTalkAppBot'
+  | 'feishuAppBot'
 
 export const NotifierTypeMap = {
   wechatWorkAPPBot: 'wechatWorkAPPBot',
   wechatWorkWebhookBot: 'wechatWorkWebhookBot',
   telegramAppBot: 'telegramAppBot',
   dingTalkAppBot: 'dingTalkAppBot',
+  feishuAppBot: 'feishuAppBot',
 } as const
 
 // 通知服务类型选项
@@ -89,6 +91,7 @@ export const notifierTypeOptions = [
   { title: '企业微信群机器人', value: NotifierTypeMap.wechatWorkWebhookBot },
   { title: 'Telegram', value: NotifierTypeMap.telegramAppBot },
   { title: '钉钉', value: NotifierTypeMap.dingTalkAppBot },
+  { title: '飞书', value: NotifierTypeMap.feishuAppBot },
 ]
 
 // 通知级别
@@ -128,9 +131,19 @@ export interface DingTalkConfig {
   targets?: string
 }
 
+// 飞书配置
+export interface FeishuConfig {
+  enabled: boolean
+  app_id: string
+  app_secret: string
+  targets?: string
+  proxy?: string
+}
+
 // 通知服务配置联合类型
 export type NotifierConfig =
   | WechatWorkConfig
   | WechatWorkWebhookConfig
   | TelegramConfig
   | DingTalkConfig
+  | FeishuConfig
