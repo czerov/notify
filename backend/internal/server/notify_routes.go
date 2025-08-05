@@ -94,6 +94,7 @@ func (s *HTTPServer) handleSendNotification(c *gin.Context) {
 	body, _ := io.ReadAll(c.Request.Body)
 	contentType := c.Request.Header.Get("Content-Type")
 	logger.Debug("请求体", "body", string(body))
+	logger.Debug("请求头", "contentType", contentType)
 	var rawData map[string]interface{} = make(map[string]interface{})
 	if strings.Contains(strings.ToLower(contentType), "application/x-www-form-urlencoded") {
 		formData, err := url.ParseQuery(string(body))
