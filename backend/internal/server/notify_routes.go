@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -88,13 +89,13 @@ type NotificationSendResponseData struct {
 func (s *HTTPServer) handleSendNotification(c *gin.Context) {
 	// appID := c.GetString("appID")
 	appConfig := c.MustGet("appConfig").(config.NotificationApp)
-
+	body, _ := io.ReadAll(c.Request.Body)
+	logger.Error("请求体", "body", string(body))
 	// 从JSON body获取原始数据
 	var rawData map[string]interface{}
-	if err := c.ShouldBindJSON(&rawData); err != nil {
+	err := json.Unmarshal(body, &rawData)
+	if err != nil {
 		logger.Error("解析请求失败", "error", err)
-		body, _ := io.ReadAll(c.Request.Body)
-		logger.Error("请求体", "body", string(body))
 		c.JSON(http.StatusBadRequest, NewErrorRes(PARAM_ERROR, "解析请求失败"))
 		return
 	}
