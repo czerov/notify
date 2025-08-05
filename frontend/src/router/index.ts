@@ -56,6 +56,15 @@ const router = createRouter({
             title: '模板管理',
           },
         },
+        {
+          path: '/logs',
+          name: 'Logs',
+          component: () => import('@/pages/LogsPage.vue'),
+          meta: {
+            requiresAuth: true,
+            title: '日志',
+          },
+        },
       ],
     },
     {

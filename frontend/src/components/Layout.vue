@@ -214,6 +214,12 @@ const menuItems = [
     subtitle: '管理消息模板',
     icon: 'mdi-file-document-multiple',
     to: '/templates'
+  },
+  {
+    title: '日志',
+    subtitle: '实时查看系统日志',
+    icon: 'mdi-math-log',
+    to: '/logs'
   }
 ]
 

@@ -1,9 +1,9 @@
 <template>
   <!-- 页面加载状态 -->
-  <LoadingView :loading="pageLoading" text="正在加载模板数据..." />
+  <LoadingView :loading="pageLoading" text="正在加载模板数据..." v-if="pageLoading" />
 
   <!-- 页面内容 -->
-  <div>
+  <div v-else>
     <!-- 页面标题 -->
     <v-row>
       <v-col>

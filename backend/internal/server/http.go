@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -90,6 +91,9 @@ func (s *HTTPServer) setupRoutes() {
 
 	// 设置管理路由 (定义在 admin_routes.go)
 	s.setupAdminRoutes(api)
+
+	// 设置日志流路由 (定义在 log_routes.go)
+	s.setupLogRoutes(api)
 }
 
 // setupStaticRoutes 设置静态文件路由 (前端资源)
@@ -99,11 +103,11 @@ func (s *HTTPServer) setupStaticRoutes() {
 
 	// 检查静态文件目录是否存在
 	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
-		logger.Warn("静态文件目录不存在，跳过前端资源服务", "dir", staticDir)
+		logger.Warn(fmt.Sprintf("静态文件目录不存在，跳过前端资源服务: %s", staticDir))
 		return
 	}
 
-	logger.Info("启用前端静态文件服务", "dir", staticDir)
+	logger.Info(fmt.Sprintf("启用前端静态文件服务, dir=%s", staticDir))
 
 	// 根路径重定向到index.html
 	s.router.GET("/", func(c *gin.Context) {
@@ -147,16 +151,13 @@ func (s *HTTPServer) logSupportedApps() {
 		if appConfig.Auth != nil && appConfig.Auth.Enabled {
 			authStatus = "需要Token认证"
 		}
-		logger.Info("支持应用端点",
-			"endpoint", "/api/v1/notify/"+appName,
-			"app_name", appConfig.Name,
-			"auth_status", authStatus)
+		logger.Info(fmt.Sprintf("支持应用端点: endpoint=/api/v1/notify/%s, app_name=%s, auth_status=%s", appName, appConfig.Name, authStatus))
 	}
 }
 
 // Start 启动服务器
 func (s *HTTPServer) Start() error {
-	logger.Info("启动HTTP服务器", "addr", s.server.Addr)
+	logger.Info(fmt.Sprintf("启动HTTP服务器, addr=%s", s.server.Addr))
 	return s.server.ListenAndServe()
 }
 

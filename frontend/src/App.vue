@@ -22,3 +22,10 @@ onMounted(() => {
   padding-bottom: env(safe-area-inset-bottom);
 }
 </style>
+
+<style>
+html {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(var(--v-theme-perfect-scrollbar-thumb), 1) transparent;
+}
+</style>
