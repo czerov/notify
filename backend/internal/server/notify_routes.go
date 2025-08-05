@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"notify/internal/config"
 	"notify/internal/logger"
@@ -90,15 +92,48 @@ func (s *HTTPServer) handleSendNotification(c *gin.Context) {
 	// appID := c.GetString("appID")
 	appConfig := c.MustGet("appConfig").(config.NotificationApp)
 	body, _ := io.ReadAll(c.Request.Body)
-	logger.Error("请求体", "body", string(body))
-	// 从JSON body获取原始数据
-	var rawData map[string]interface{}
-	err := json.Unmarshal(body, &rawData)
-	if err != nil {
-		logger.Error("解析请求失败", "error", err)
-		c.JSON(http.StatusBadRequest, NewErrorRes(PARAM_ERROR, "解析请求失败"))
-		return
+	contentType := c.Request.Header.Get("Content-Type")
+	logger.Debug("请求体", "body", string(body))
+	var rawData map[string]interface{} = make(map[string]interface{})
+	if strings.Contains(strings.ToLower(contentType), "application/x-www-form-urlencoded") {
+		formData, err := url.ParseQuery(string(body))
+		if err != nil {
+			logger.Error("解析请求失败", "error", err)
+			c.JSON(http.StatusBadRequest, NewErrorRes(PARAM_ERROR, "解析请求失败"))
+			return
+		}
+		for key, values := range formData {
+			if len(values) > 0 {
+				rawData[key] = values[0] // 取第一个值
+			}
+		}
+	} else if strings.Contains(strings.ToLower(contentType), "multipart/form-data") {
+		// 解析 multipart/form-data
+		err := c.Request.ParseMultipartForm(32 << 20) // 32MB max memory
+		if err != nil {
+			logger.Error("解析 multipart/form-data 失败", "error", err)
+			c.JSON(http.StatusBadRequest, NewErrorRes(PARAM_ERROR, "解析 multipart/form-data 失败"))
+			return
+		}
+
+		// 获取表单字段
+		if c.Request.MultipartForm != nil && c.Request.MultipartForm.Value != nil {
+			for key, values := range c.Request.MultipartForm.Value {
+				if len(values) > 0 {
+					rawData[key] = values[0] // 取第一个值
+				}
+			}
+		}
+	} else {
+		// 从JSON body获取原始数据
+		err := json.Unmarshal(body, &rawData)
+		if err != nil {
+			logger.Error("解析请求失败", "error", err)
+			c.JSON(http.StatusBadRequest, NewErrorRes(PARAM_ERROR, "解析请求失败"))
+			return
+		}
 	}
+
 	logger.Debug("发送通知原始参数", "data", rawData)
 
 	// 发送通知
