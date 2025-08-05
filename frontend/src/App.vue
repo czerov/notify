@@ -20,6 +20,5 @@ onMounted(() => {
 .app {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
-  background-color: #28243D;
 }
 </style>
