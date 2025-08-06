@@ -126,8 +126,8 @@ func Init() {
 
 	// 包装handler来处理caller skip
 	// skip=4 是因为：runtime.Callers -> Handle -> 便捷方法 -> 实际调用者
-	handler := NewCallerSkipHandler(baseHandler, 4)
-	webHandler := NewCallerSkipHandler(slog.NewJSONHandler(&ChannelWriter{}, opts), 4)
+	handler := NewCallerSkipHandler(baseHandler, 5)
+	webHandler := NewCallerSkipHandler(slog.NewJSONHandler(&ChannelWriter{}, opts), 5)
 	mh := multiHandler{[]slog.Handler{
 		handler,
 		webHandler,

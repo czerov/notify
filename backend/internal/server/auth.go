@@ -85,10 +85,10 @@ func (am *AuthMiddleware) BasicAuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 认证成功，记录日志
-		logger.Info("管理接口认证成功",
-			"method", c.Request.Method,
-			"path", c.Request.URL.Path,
-			"user", username)
+		// logger.Info("管理接口认证成功",
+		// 	"method", c.Request.Method,
+		// 	"path", c.Request.URL.Path,
+		// 	"user", username)
 
 		c.Next()
 	}

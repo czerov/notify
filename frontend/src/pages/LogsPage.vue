@@ -5,8 +5,10 @@
     </div>
     <div class="log-container">
       <div v-for="(log, index) in logs" :key="index" class="log-line">
-        <v-chip class="ma-1 level-chip" size="x-small" :color="levelColor(log.level)" label>{{ log.level }}</v-chip>
-        <span class="timestamp">{{ log.time }}</span>
+        <div class="log-line-left">
+          <v-chip class="ma-1 level-chip" size="x-small" :color="levelColor(log.level)" label>{{ log.level }}</v-chip>
+          <span class="timestamp">{{ log.time }}</span>
+        </div>
         <span class="message">
           <span>{{ log.msg }}</span>
           <span>{{ _.omit(log, ['level', 'time', 'msg']) }}</span>
@@ -97,6 +99,12 @@ onBeforeUnmount(() => {
   padding: 4px 0;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   width: fit-content;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px
+  }
 
   .level-chip {
     width: 60px;
