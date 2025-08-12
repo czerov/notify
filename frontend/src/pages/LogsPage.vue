@@ -3,8 +3,8 @@
     <div class="header">
       日志
     </div>
-    <div class="log-container">
-      <div v-for="(log, index) in logs" :key="index" class="log-line">
+    <div class="log-container" ref="containerRef">
+      <div v-for="log in logs" :key="log._k" class="log-line">
         <div class="log-line-left">
           <v-chip class="ma-1 level-chip" size="x-small" :color="levelColor(log.level)" label>{{ log.level }}</v-chip>
           <span class="timestamp">{{ log.time }}</span>
@@ -31,6 +31,36 @@ interface LogEntry {
 
 const logs = ref<LogEntry[]>([])
 let eventSource: EventSource | null = null
+const containerRef = ref<HTMLDivElement | null>(null)
+
+// 批量缓冲，避免高频渲染
+const buffer: LogEntry[] = []
+let flushScheduled = false
+let nextId = 1
+
+
+
+function scheduleFlush() {
+  if (flushScheduled) return
+  flushScheduled = true
+  requestAnimationFrame(async () => {
+    try {
+      if (buffer.length === 0) return
+      // 批量一次性 push，减少响应触发次数
+      logs.value.push(...buffer)
+      buffer.length = 0
+      // 控制日志数量上限
+      if (logs.value.length > 500) {
+        const removeCount = logs.value.length - 500
+        logs.value.splice(0, removeCount)
+      }
+    } finally {
+      flushScheduled = false
+      // 若在 flush 过程中又有新数据，继续安排下一次
+      if (buffer.length > 0) scheduleFlush()
+    }
+  })
+}
 
 
 
@@ -54,16 +84,10 @@ onMounted(() => {
   eventSource.onmessage = (e) => {
     const entry = JSON.parse(e.data)
     entry.time = new Date(entry.time).toLocaleString()
-    logs.value.unshift(entry)
-    // 控制日志数量，避免内存过高
-    if (logs.value.length > 500) {
-      logs.value.pop()
-    }
-    // 滚动到底部
-    const container = document.querySelector('.log-container')
-    if (container) {
-      container.scrollTop = container.scrollHeight
-    }
+    // 为每条日志生成稳定 key
+    entry._k = nextId++
+    buffer.push(entry)
+    scheduleFlush()
   }
 })
 
@@ -84,27 +108,22 @@ onBeforeUnmount(() => {
 }
 
 .log-container {
-  overflow-x: auto;
-  overflow-y: hidden;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  overflow-x: hidden;
   .scrollbar();
 }
 
 .log-line {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
-  align-items: center;
   font-size: 0.9rem;
   line-height: 1.4;
   padding: 4px 0;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  width: fit-content;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px
-  }
 
   .level-chip {
     width: 60px;
@@ -126,7 +145,6 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: 4px;
     flex: 1;
-    min-width: 400px;
   }
 }
 </style>
